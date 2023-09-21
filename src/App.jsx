@@ -6,25 +6,23 @@ import Body from './layouts/Body/Body';
 import Header from './components/Header/Header';
 import JournalList from './components/JournalList/JournalList';
 import JournalForm from './components/JournalForm/JournalForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
-	const INITIAL_DATA = [
-		// {
-		// 	title: 'Подготовка к обновлению курсов',
-		// 	text: 'Сегодня провёл весь день за...',
-		// 	date: new Date(),
-		// 	id: 1
-		// },
-		// {
-		// 	title: 'Поход в годы',
-		// 	text: 'Думал, что очень много време...',
-		// 	date: new Date(),
-		// 	id: 2
-		// }
-	];
+	const [items, setItems] = useState([]);
 
-	const [items, setItems] = useState(INITIAL_DATA);
+	useEffect(() => {
+		const data = JSON.parse(localStorage.getItem('data'));
+		if (data) {
+			setItems(data.map(item => ({ ...item, date: new Date(item.date) })));
+		}
+	}, []);
+
+	useEffect(() => {
+		if (items.length) {
+			localStorage.setItem('data', JSON.stringify(items));
+		}
+	}, [items]);
 
 	const addItem = newJournalItem => {
 		setItems(oldItems => [
