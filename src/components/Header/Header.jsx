@@ -1,6 +1,13 @@
+import SelectUser from '../SelectUser/SelectUser';
 import styles from './Header.module.css';
+
 function Header() {
-	return <img className={styles.logo} src='/logo.svg' alt='Journal Logo' />;
+	return (
+		<>
+			<img className={styles.logo} src='/logo.svg' alt='Journal Logo' />
+			<SelectUser />
+		</>
+	);
 }
 
 export default Header;
