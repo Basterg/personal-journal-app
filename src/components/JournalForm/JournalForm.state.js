@@ -1,18 +1,17 @@
 export const INITIAL_STATE = {
 	isValid: {
-		text: true,
-		date: true,
-		title: true
+		post: true,
+		title: true,
+		date: true
 	},
 	values: {
-		text: '',
-		date: '',
+		post: '',
 		title: '',
+		date: '',
 		tag: ''
 	},
 	isFormReadyToSubmit: false
 };
-
 /* eslint-disable indent */
 export function formReducer(state, action) {
 	switch (action.type) {
@@ -28,16 +27,16 @@ export function formReducer(state, action) {
 			return { ...state, isValid: INITIAL_STATE.isValid };
 		case 'SUBMIT': {
 			const titleValidity = state.values.title?.trim().length;
-			const dateValidity = state.values.date?.trim().length;
-			const textValidity = state.values.text?.trim().length;
+			const postValidity = state.values.post?.trim().length;
+			const dateValidity = state.values.date;
 			return {
 				...state,
 				isValid: {
+					post: postValidity,
 					title: titleValidity,
-					date: dateValidity,
-					text: textValidity
+					date: dateValidity
 				},
-				isFormReadyToSubmit: titleValidity && dateValidity && textValidity
+				isFormReadyToSubmit: titleValidity && postValidity && dateValidity
 			};
 		}
 	}

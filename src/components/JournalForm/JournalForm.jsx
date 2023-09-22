@@ -6,17 +6,15 @@ import { INITIAL_STATE, formReducer } from './JournalForm.state';
 import Input from '../Input/Input';
 import { UserContext } from '../../context/user.context';
 
-function JournalForm({ onSubmit }) {
+function JournalForm({ onSubmit, data, onDelete }) {
 	const [formState, dispatchForm] = useReducer(formReducer, INITIAL_STATE);
 	const { isValid, isFormReadyToSubmit, values } = formState;
-	const { userId } = useContext(UserContext);
-
 	const titleRef = useRef();
 	const dateRef = useRef();
-	const textRef = useRef();
+	const postRef = useRef();
+	const { userId } = useContext(UserContext);
 
 	/* eslint-disable indent */
-
 	const focusError = isValid => {
 		switch (true) {
 			case !isValid.title:
@@ -25,21 +23,28 @@ function JournalForm({ onSubmit }) {
 			case !isValid.date:
 				dateRef.current.focus();
 				break;
-			case !isValid.text:
-				textRef.current.focus();
+			case !isValid.post:
+				postRef.current.focus();
 				break;
 		}
 	};
 
 	useEffect(() => {
+		if (!data) {
+			dispatchForm({ type: 'CLEAR' });
+			dispatchForm({ type: 'SET_VALUE', payload: { userId } });
+		}
+		dispatchForm({ type: 'SET_VALUE', payload: { ...data } });
+	}, [data]);
+
+	useEffect(() => {
 		let timerId;
-		if (!isValid.title || !isValid.date || !isValid.text) {
+		if (!isValid.date || !isValid.post || !isValid.title) {
 			focusError(isValid);
 			timerId = setTimeout(() => {
 				dispatchForm({ type: 'RESET_VALIDITY' });
 			}, 2000);
 		}
-
 		return () => {
 			clearTimeout(timerId);
 		};
@@ -49,14 +54,12 @@ function JournalForm({ onSubmit }) {
 		if (isFormReadyToSubmit) {
 			onSubmit(values);
 			dispatchForm({ type: 'CLEAR' });
+			dispatchForm({ type: 'SET_VALUE', payload: { userId } });
 		}
-	}, [isFormReadyToSubmit, values, onSubmit]);
+	}, [isFormReadyToSubmit, values, onSubmit, userId]);
 
 	useEffect(() => {
-		dispatchForm({
-			type: 'SET_VALUE',
-			payload: { userId }
-		});
+		dispatchForm({ type: 'SET_VALUE', payload: { userId } });
 	}, [userId]);
 
 	const onChange = e => {
@@ -68,58 +71,80 @@ function JournalForm({ onSubmit }) {
 
 	const addJournalItem = e => {
 		e.preventDefault();
-
 		dispatchForm({ type: 'SUBMIT' });
 	};
+
+	const deleteJournalItem = () => {
+		onDelete(data.id);
+		dispatchForm({ type: 'CLEAR' });
+		dispatchForm({ type: 'SET_VALUE', payload: { userId } });
+	};
+
 	return (
 		<form className={styles['journal-form']} onSubmit={addJournalItem}>
-			<div>
+			<div className={styles['form-row']}>
 				<Input
+					appearence='title'
 					type='text'
-					name='title'
-					value={values.title}
-					onChange={onChange}
 					ref={titleRef}
-					appearance={'title'}
-					isValid={isValid.title}
+					onChange={onChange}
+					value={values.title}
+					name='title'
+					isValid={!isValid.title}
 				/>
+				{data?.id && (
+					<button
+						className={styles['delete']}
+						type='button'
+						onClick={deleteJournalItem}
+					>
+						<img src='/archive.svg' alt='Кнопка удалить' />
+					</button>
+				)}
 			</div>
 			<div className={styles['form-row']}>
 				<label htmlFor='date' className={styles['form-label']}>
-					<img src='calendar.svg' alt='Иконка Календаря' />
+					<img src='/calendar.svg' alt='Иконка календаря' />
 					<span>Дата</span>
 				</label>
 				<Input
 					type='date'
-					name='date'
-					id='date'
 					ref={dateRef}
-					value={values.date}
 					onChange={onChange}
-					isValid={isValid.date}
+					name='date'
+					value={
+						values.date ? new Date(values.date).toISOString().slice(0, 10) : ''
+					}
+					id='date'
+					isValid={!isValid.title}
 				/>
 			</div>
-
 			<div className={styles['form-row']}>
 				<label htmlFor='tag' className={styles['form-label']}>
-					<img src='folder.svg' alt='Иконка Папки' />
+					<img src='/folder.svg' alt='Иконка папки' />
 					<span>Метки</span>
 				</label>
-				<Input type='text' name='tag' id='tag' />
+				<Input
+					type='text'
+					onChange={onChange}
+					id='tag'
+					value={values.tag}
+					name='tag'
+				/>
 			</div>
 			<textarea
-				name='text'
+				ref={postRef}
+				name='post'
 				id=''
+				onChange={onChange}
+				value={values.post}
 				cols='30'
 				rows='10'
-				value={values.text}
-				onChange={onChange}
-				ref={textRef}
 				className={cn(styles['input'], {
-					[styles.invalid]: !isValid.text
+					[styles['invalid']]: !isValid.post
 				})}
 			></textarea>
-			<Button text={'Сохранить'} />
+			<Button>Сохранить</Button>
 		</form>
 	);
 }

@@ -1,6 +1,6 @@
 .journal-item {
 	border-radius: 3px;
-	background: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.03);
 	color: #fff;
 	padding: 20px;
 }
@@ -14,7 +14,6 @@
 
 .journal-item__date {
 	color: rgba(255, 255, 255, 0.4);
-	font-family: Source Sans Pro;
 	font-size: 16px;
 	font-style: normal;
 	font-weight: 400;

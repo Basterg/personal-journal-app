@@ -1,21 +1,30 @@
-.input {
-	color: #fff;
+.input-title {
+	color: aliceblue;
 	border: none;
 	background: none;
+	font-size: 32px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: normal;
 	font-family: 'Source Sans 3', sans-serif;
+	border-bottom: 1px solid #323232;
+	width: 100%;
+}
+
+.input {
+	color: aliceblue;
+	border: none;
+	background: none;
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 600;
 	line-height: normal;
-	border-bottom: 1px solid #535353;
+	font-family: 'Source Sans 3', sans-serif;
+	border-bottom: 1px solid #323232;
 	width: 100%;
-}
-
-.input-title {
-	font-size: 32px;
 }
 
 .invalid {
 	border: 1px solid red;
-	background: rgb(113, 13, 13);
+	background: rgb(68, 6, 6);
 }
